@@ -24,7 +24,7 @@ jobs:
       - name: Create package archive
         uses: edgarrc/action-7z@v1.0.4
         with:
-          args: 7z a -t7z -mx=9 english_pack_${{ github.ref }}.7z ./output/*
+          args: 7z a -t7z -mx=9 english_pack.7z ./output/*
 
       - name: Create release
         id: create_release
@@ -41,7 +41,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: english_pack_${{ github.ref }}.7z
+          file: english_pack.7z
           asset_name: Translation pack
           tag: ${{ github.ref }}
           overwrite: true
