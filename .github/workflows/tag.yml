@@ -1,0 +1,47 @@
+on:
+  push:
+    tags:
+      - '*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Create Release on Tag
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2.1.4
+        with:
+          python-version: 3.8
+
+      - name: Run sync_l10n.py
+        run: python sync_l10n.py
+
+      - name: Create package archive
+        uses: edgarrc/action-7z@v1.0.4
+        with:
+          args: 7z a -t7z -mx=9 english_pack_${{ github.ref }}.7z ./output/*
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: English Package ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: english_pack_${{ github.ref }}.7z
+          asset_name: Translation pack
+          tag: ${{ github.ref }}
+          overwrite: true
