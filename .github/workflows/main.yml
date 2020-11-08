@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2.1.4
+        with:
+          python-version: 3.8
+
+      - name: Run sync_l10n.py
+        run: python sync_l10n.py
+
