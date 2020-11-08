@@ -1,0 +1,13 @@
+*.dds binary
+*.jpg binary
+*.png binary
+*.exe binary
+
+*.md text
+*.py text diff=python
+
+client/**/* binary
+l10n_reference/**/* binary
+l10n_patch/**/* binary
+
+
