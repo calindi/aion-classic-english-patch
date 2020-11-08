@@ -134,7 +134,7 @@ def parseAionXml(data: str) -> XMLElement:
     return None
             
 EXPRESSION_RE = re.compile(r"\[%[^%\]].*?\]|%[0-9]")
-        
+
 @dataclass
 class AionString:
     tag_name: str
@@ -193,50 +193,54 @@ class AionStringDict:
     strings: Dict[int, AionString]
 
     @staticmethod
-    def read(path: str) -> AionStringDict:
+    def read(path: str, allow_missing=False) -> AionStringDict:
         strings: Dict[int, AionString] = dict()
 
-        if os.path.exists(path):
+        if not os.path.exists(path):
+            if allow_missing:
+                return AionStringDict(strings)
+            else:
+                raise Exception(f"'{path}' does not exist!")
 
-            with open(path, 'r', encoding='utf-16') as f:
-                xml_string = f.read()
+        with open(path, 'r', encoding='utf-16') as f:
+            xml_string = f.read()
+        
+        elements = parseAionXml(xml_string)
+
+        for string_element in elements.children:
+            if string_element.name != "string" and string_element.name != "string_tip":
+                raise Exception(f"Expected <string> or <string_tip> element, got <{string_element.name}> instead!")
+
+            for child in string_element.children:
+                if child.name not in VALID_TAGS:
+                    raise Exception(f"Unknow tag: <{child.name}>")
+
+            id_element = string_element.find('id')
+            if id_element is None:
+                raise Exception(f"<id> element not found!")
+            id_value = int(id_element.text)
+
+            name_element = string_element.find('name')
+            if name_element is None:
+                raise Exception(f"<name> element not found for id {id_value}!")
+            name_value = name_element.text
+
+            body_element = string_element.find('body')
+            body_value = body_element.text if body_element is not None else None
+
+            message_type_element = string_element.find('message_type')
+            message_type_value = message_type_element.text if message_type_element is not None else None
+
+            display_type_element = string_element.find('display_type')
+            display_type_value = int(display_type_element.text) if display_type_element is not None else None 
+
+            ment_element = string_element.find('ment')
+            ment_value = ment_element.text if ment_element is not None else None
+
+            rank_element = string_element.find('rank')
+            rank_value = int(rank_element.text) if rank_element is not None else None 
             
-            elements = parseAionXml(xml_string)
-
-            for string_element in elements.children:
-                if string_element.name != "string" and string_element.name != "string_tip":
-                    raise Exception(f"Expected <string> or <string_tip> element, got <{string_element.name}> instead!")
-
-                for child in string_element.children:
-                    if child.name not in VALID_TAGS:
-                        raise Exception(f"Unknow tag: <{child.name}>")
-
-                id_element = string_element.find('id')
-                if id_element is None:
-                    raise Exception(f"<id> element not found!")
-                id_value = int(id_element.text)
-
-                name_element = string_element.find('name')
-                if name_element is None:
-                    raise Exception(f"<name> element not found for id {id_value}!")
-                name_value = name_element.text
-
-                body_element = string_element.find('body')
-                body_value = body_element.text if body_element is not None else None
-
-                message_type_element = string_element.find('message_type')
-                message_type_value = message_type_element.text if message_type_element is not None else None
-
-                display_type_element = string_element.find('display_type')
-                display_type_value = int(display_type_element.text) if display_type_element is not None else None 
-
-                ment_element = string_element.find('ment')
-                ment_value = ment_element.text if ment_element is not None else None
-
-                rank_element = string_element.find('rank')
-                rank_value = int(rank_element.text) if rank_element is not None else None 
-                
-                strings[id_value] = AionString(string_element.name, id_value, name_value, body_value, message_type_value, display_type_value, ment_value, rank_value)
+            strings[id_value] = AionString(string_element.name, id_value, name_value, body_value, message_type_value, display_type_value, ment_value, rank_value)
 
         return AionStringDict(strings)
 
@@ -263,14 +267,27 @@ class AionStringDict:
                 f.write(f"  </{s.tag_name}>\r\n")
             f.write(f"</{tag}>\r\n")
 
+def case_insensitive_path(base_path: str, rel_path: str):
+    rel_path_components = rel_path.split(os.sep)
+    for path_component in rel_path_components:
+        try:
+            matching_names = [name for name in os.listdir(base_path) if path_component.lower() == name.lower()]
+            if len(matching_names) > 0:
+                base_path = os.path.join(base_path, matching_names[0])
+            else:
+                base_path = os.path.join(base_path, path_component)
+        except:
+            base_path = os.path.join(base_path, path_component)
+    return base_path
+
 def sync_strings(relpath: str, tag="strings"):
     print()
     print()
     print(f"Checking file '{relpath}'")
 
-    client_dict = AionStringDict.read(os.path.join(CLIENT_DIR, relpath))
-    l10n_reference__dict = AionStringDict.read(os.path.join(L10N_REFERENCE_DIR, relpath))
-    l10n_patch_dict = AionStringDict.read(os.path.join(L10N_PATCH_DIR, relpath))
+    client_dict = AionStringDict.read(case_insensitive_path(CLIENT_DIR, relpath))
+    l10n_reference__dict = AionStringDict.read(case_insensitive_path(L10N_REFERENCE_DIR, relpath))
+    l10n_patch_dict = AionStringDict.read(case_insensitive_path(L10N_PATCH_DIR, relpath), allow_missing=True)
 
     # Merge english and custom patch dict
     l10n_dict = AionStringDict({**l10n_reference__dict.strings, **l10n_patch_dict.strings})
