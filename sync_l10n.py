@@ -358,10 +358,8 @@ def main():
     print(f"Copying reference l10n data\\strings\\error to output directory...")
     shutil.copytree(os.path.join(L10N_REFERENCE_DIR, 'data', 'strings', 'error'), os.path.join(OUTPUT_DIR, 'data', 'strings', 'error'))
 
-    print(f"Applying patch l10n data\\ui\\createinfos.xml...")
-    shutil.copyfile(os.path.join(L10N_PATCH_DIR, 'data', 'ui', 'createinfos.xml'), os.path.join(OUTPUT_DIR, 'data', 'ui', 'createinfos.xml'))
-    print(f"Applying patch l10n data\\ui\\serverlist.xml...")
-    shutil.copyfile(os.path.join(L10N_PATCH_DIR, 'data', 'ui', 'serverlist.xml'), os.path.join(OUTPUT_DIR, 'data', 'ui', 'serverlist.xml'))
+    print(f"Copying patch l10n data\\ui to output directory...")
+    shutil.copytree(os.path.join(L10N_PATCH_DIR, 'data', 'ui'), os.path.join(OUTPUT_DIR, 'data', 'ui'))
 
 if __name__ == '__main__':
     main()
