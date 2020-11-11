@@ -349,8 +349,6 @@ def main():
 
     print(f"Copying reference l10n textures to output directory...")
     shutil.copytree(os.path.join(L10N_REFERENCE_DIR, 'textures'), os.path.join(OUTPUT_DIR, 'textures'))
-    print(f"Copying reference l10n data\\ui to output directory...")
-    shutil.copytree(os.path.join(L10N_REFERENCE_DIR, 'data', 'ui'), os.path.join(OUTPUT_DIR, 'data', 'ui'))
     print(f"Copying reference l10n data\\dialogs to output directory...")
     shutil.copytree(os.path.join(L10N_REFERENCE_DIR, 'data', 'dialogs'), os.path.join(OUTPUT_DIR, 'data', 'dialogs'))
     print(f"Copying reference l10n data\\cutscene to output directory...")
