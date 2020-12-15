@@ -21,10 +21,15 @@ jobs:
       - name: Run sync_l10n.py
         run: python sync_l10n.py
 
-      - name: Create package archive
+      - name: Create standard pack archive
         uses: edgarrc/action-7z@v1.0.4
         with:
           args: 7z a -t7z -mx=9 english_pack.7z ./output/*
+
+      - name: Create krlfg pack archive
+        uses: edgarrc/action-7z@v1.0.4
+        with:
+          args: 7z a -t7z -mx=9 english_pack_krlfg.7z ./output_krlfg/*
 
       - name: Create release
         id: create_release
@@ -37,11 +42,20 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload binaries to release
+      - name: Upload standard pack to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: english_pack.7z
-          asset_name: English_Translation_Pack.7z
+          asset_name: EnglishTranslationPack_Full.7z
+          tag: ${{ github.ref }}
+          overwrite: true
+
+      - name: Upload krlfg pack to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: english_pack_krlfg.7z
+          asset_name: EnglishTranslationPack_WithApplyToGroupInKorean.7z
           tag: ${{ github.ref }}
           overwrite: true
