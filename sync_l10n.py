@@ -394,7 +394,7 @@ def make_package(client_dir: str, reference_dir: str, patch_dir: str, output_dir
     os.makedirs(output_dir)
 
 
-    if variant_dir not None:
+    if variant_dir is None:
         print("### Syncing standard package")
     else:
         print(f"### Syncing with variant: '{variant_dir}'")
