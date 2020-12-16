@@ -352,9 +352,10 @@ def sync_all_strings(client_dir: str, reference_dir: str, patch_dir: str, output
         'client_strings_gossip.xml',
         'client_strings_item.xml',
         'client_strings_item2.xml',
-        'client_strings_item2.xml',
+        'client_strings_level.xml',
         'client_strings_monster.xml',
         'client_strings_msg.xml',
+        'client_strings_npc.xml',
         'client_strings_quest.xml',
         'client_strings_skill.xml',
         'client_strings_ui.xml',
@@ -369,7 +370,7 @@ def sync_all_strings(client_dir: str, reference_dir: str, patch_dir: str, output
             patch_dir=patch_dir,
             output_dir=output_dir,
             variant_dir=variant_dir,
-            tag="string",
+            tag="strings",
             silent=silent)
 
     STRING_TIPS_FILES = [
@@ -378,7 +379,7 @@ def sync_all_strings(client_dir: str, reference_dir: str, patch_dir: str, output
 
     for string_tip_file in STRING_TIPS_FILES:
         sync_strings(
-            relpath=os.path.join('data', 'strings', string_file),
+            relpath=os.path.join('data', 'strings', string_tip_file),
             client_dir=client_dir,
             reference_dir=reference_dir,
             patch_dir=patch_dir,

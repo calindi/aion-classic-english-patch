@@ -6,8 +6,8 @@
 *.md text
 *.py text diff=python
 
-client/**/* binary
-l10n_reference/**/* binary
-l10n_patch/**/* binary
+client/**/* binary diff=localizablestrings
+l10n_reference/**/* binary diff=localizablestrings
+l10n_patch/**/* binary diff=localizablestrings
 
 

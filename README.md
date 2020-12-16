@@ -2,6 +2,11 @@ aion-classic-english-patch
 ==========================
 English patch for Aion Classic on South Korean servers
 
+Important
+---------
+
+This package is for developers, if you simply want to install the translation pack in your game, head to Releases!
+
 Requires
 --------
 - Python 3.8+ to run sync_l10n.py
